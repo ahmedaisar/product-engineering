@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import shutil
 import subprocess
 from pathlib import Path
@@ -31,15 +32,51 @@ def current_revision() -> str:
         return "unknown"
 
 
+
+def adapt_skill_for_chatgpt(skill_file: Path) -> None:
+    """Preserve user-started workflows by making their activation rule explicit in metadata."""
+    text = skill_file.read_text(encoding="utf-8")
+    match = re.match(r"\\A---\\s*\\n(.*?)\\n---(.*)\\Z", text, re.S)
+    if not match:
+        return
+    frontmatter, body = match.groups()
+    if not re.search(r"(?m)^disable-model-invocation:\\s*true\\s*$", frontmatter):
+        return
+
+    description_match = re.search(
+        r'(?m)^description:\\s*("(?:\\\\.|[^"\\\\])*"|' + r"'[^']*'|[^\\n]+)$",
+        frontmatter,
+    )
+    prefix = "Only activate when the user explicitly asks to run this skill by name. "
+    if description_match:
+        raw_value = description_match.group(1).strip()
+        if raw_value.startswith('"'):
+            description = json.loads(raw_value)
+        elif raw_value.startswith("'") and raw_value.endswith("'"):
+            description = raw_value[1:-1].replace("''", "'")
+        else:
+            description = raw_value
+        replacement = "description: " + json.dumps(prefix + str(description))
+        frontmatter = (
+            frontmatter[:description_match.start()]
+            + replacement
+            + frontmatter[description_match.end():]
+        )
+    else:
+        frontmatter += "\\ndescription: " + json.dumps(prefix.rstrip())
+    skill_file.write_text("---\\n" + frontmatter + "\\n---" + body, encoding="utf-8")
+
+
 def build(output: Path, mcp_url: str | None = None) -> dict:
     output = output.resolve()
     if output == ROOT or (ROOT in output.parents and output != ROOT / "dist"):
         raise ValueError("Use the default repository dist/ directory or an output directory outside the source repository.")
-    if output.exists():
-        shutil.rmtree(output)
-    output.mkdir(parents=True)
-
+    output.mkdir(parents=True, exist_ok=True)
     plugin_root = output / PLUGIN_NAME
+    if plugin_root.is_symlink():
+        plugin_root.unlink()
+    elif plugin_root.exists():
+        shutil.rmtree(plugin_root)
     plugin_root.mkdir()
     shutil.copy2(CHATGPT / "plugin.json", plugin_root / "plugin.json")
 
@@ -66,7 +103,9 @@ def build(output: Path, mcp_url: str | None = None) -> dict:
                     f"Duplicate skill folder name {name!r}: {seen[name]} and {skill_dir}"
                 )
             seen[name] = str(skill_dir.relative_to(ROOT))
-            shutil.copytree(skill_dir, skills_root / name)
+            packaged_skill = skills_root / name
+            shutil.copytree(skill_dir, packaged_skill)
+            adapt_skill_for_chatgpt(packaged_skill / "SKILL.md")
             total += 1
 
     if total == 0:
