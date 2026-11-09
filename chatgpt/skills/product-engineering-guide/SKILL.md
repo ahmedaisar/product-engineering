@@ -27,6 +27,10 @@ You have access to the Product Engineering skill collection. Use the canonical s
 
 The collection contains 44 skills. Do not dump the entire catalogue into a response; discover only what is relevant.
 
+## Explicitly user-started workflows
+
+These four workflows are intentionally user-started: `start-here`, `ship-check`, `handover` and `retro`. Run one only when the user explicitly asks to start that named workflow. Do not trigger them merely because a task resembles their subject. The package builder also prefixes their skill descriptions with this activation rule.
+
 ## Important boundaries
 
 - Skills provide workflow guidance; they do not grant access to a user's repository, accounts, production systems or credentials.
