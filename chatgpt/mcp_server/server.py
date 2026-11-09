@@ -32,6 +32,13 @@ CACHE_SECONDS = int(os.environ.get("CACHE_SECONDS", "300"))
 REQUEST_TIMEOUT = float(os.environ.get("REQUEST_TIMEOUT", "8"))
 MAX_FILE_BYTES = 256_000
 
+VERCEL_ALLOWED_HOSTS = _vercel_allowed_hosts()
+TRANSPORT_SECURITY = (
+    TransportSecuritySettings(allowed_hosts=VERCEL_ALLOWED_HOSTS)
+    if VERCEL_ALLOWED_HOSTS
+    else None
+)
+
 server = FastMCP(
     "product-engineering-skills",
     instructions=(
@@ -42,6 +49,7 @@ server = FastMCP(
     host=os.environ.get("HOST", "0.0.0.0"),
     port=int(os.environ.get("PORT", "8000")),
     stateless_http=True,
+    transport_security=TRANSPORT_SECURITY,
 )
 _cache: dict[str, tuple[float, Any]] = {}
 
@@ -278,15 +286,9 @@ async def health(_request: StarletteRequest) -> Response:
     return JSONResponse({"status": "ok", "service": "product-engineering-skills"})
 
 
-# Vercel injects deployment hostnames. Local development retains the SDK's
-# safe localhost-only default when no deployment host is configured.
-_allowed_hosts = _vercel_allowed_hosts()
-if _allowed_hosts:
-    app = server.streamable_http_app(
-        transport_security=TransportSecuritySettings(allowed_hosts=_allowed_hosts)
-    )
-else:
-    app = server.streamable_http_app()
+# FastMCP 1.26.0 accepts transport security in its constructor;
+# streamable_http_app() itself takes no keyword arguments in this pinned SDK.
+app = server.streamable_http_app()
 
 
 if __name__ == "__main__":
