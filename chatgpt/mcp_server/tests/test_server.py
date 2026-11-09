@@ -55,5 +55,34 @@ class PathSafetyTests(unittest.TestCase):
             module._safe_skill_path(self.skill, "secrets.txt")
 
 
+class VercelDeploymentTests(unittest.TestCase):
+    @patch.dict(
+        module.os.environ,
+        {
+            "VERCEL_URL": "product-engineering-preview.vercel.app",
+            "VERCEL_PROJECT_PRODUCTION_URL": "product-engineering.vercel.app",
+            "MCP_ALLOWED_HOSTS": "mcp.example.com",
+        },
+        clear=True,
+    )
+    def test_vercel_hosts_are_allowlisted_with_optional_ports(self):
+        self.assertEqual(
+            module._vercel_allowed_hosts(),
+            [
+                "mcp.example.com",
+                "mcp.example.com:*",
+                "product-engineering-preview.vercel.app",
+                "product-engineering-preview.vercel.app:*",
+                "product-engineering.vercel.app",
+                "product-engineering.vercel.app:*",
+            ],
+        )
+
+    def test_asgi_app_has_mcp_and_health_routes(self):
+        paths = {route.path for route in module.app.routes}
+        self.assertIn("/mcp", paths)
+        self.assertIn("/health", paths)
+
+
 if __name__ == "__main__":
     unittest.main()
