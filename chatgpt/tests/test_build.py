@@ -93,9 +93,14 @@ class PackageBuildTests(unittest.TestCase):
         self.assertFalse((self.root / ".agents" / "plugins" / "marketplace.json").exists())
         self.assertTrue((output / "product-engineering" / "plugin.json").is_file())
 
-    def test_invalid_mcp_url_is_rejected(self):
-        with self.assertRaises(ValueError):
-            builder.build(self.root / "dist", "http://localhost:8000/mcp")
+    def test_web_package_does_not_bundle_mcp(self):
+        builder.build(self.root / "dist")
+        plugin = self.root / "dist" / "product-engineering"
+        self.assertFalse((plugin / "mcp.json").exists())
+        self.assertEqual(
+            json.loads((plugin / "build-info.json").read_text(encoding="utf-8"))["skill_count"],
+            len(builder.PACKS),
+        )
 
     def test_source_root_cannot_be_used_as_output(self):
         with self.assertRaises(ValueError):
