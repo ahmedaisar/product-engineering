@@ -35,6 +35,9 @@ server = FastMCP(
         "Search before retrieving when the user describes a task but not a skill name. "
         "Read the full skill and required references before applying its workflow."
     ),
+    host=os.environ.get("HOST", "0.0.0.0"),
+    port=int(os.environ.get("PORT", "8000")),
+    stateless_http=True,
 )
 _cache: dict[str, tuple[float, Any]] = {}
 
@@ -206,7 +209,7 @@ def get_skill(name: str) -> dict:
 
 @server.tool()
 def get_skill_file(name: str, relative_path: str) -> dict:
-    """Retrieve a tracked reference, script, template or asset from inside a skill folder."""
+    """Retrieve a tracked UTF-8 text reference, script or template from inside a skill folder."""
     item = _skill(name)
     path = _safe_skill_path(item, relative_path)
     url = f"https://raw.githubusercontent.com/{REPOSITORY}/{REF}/{path}"
@@ -249,9 +252,4 @@ def get_repository_info() -> dict:
 
 
 if __name__ == "__main__":
-    import os
-
-    port = int(os.environ.get("PORT", "8000"))
-    server.settings.host = "0.0.0.0"
-    server.settings.port = port
     server.run(transport="streamable-http")
