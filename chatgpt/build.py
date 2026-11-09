@@ -102,21 +102,28 @@ def build(output: Path, mcp_url: str | None = None) -> dict:
         json.dumps(metadata, indent=2) + "\n", encoding="utf-8"
     )
 
-    marketplace_dir = ROOT / ".agents" / "plugins"
-    marketplace_dir.mkdir(parents=True, exist_ok=True)
-    marketplace = {
-        "name": "product-engineering",
-        "plugins": [
-            {
-                "name": "product-engineering",
-                "source": {"source": "local", "path": str(plugin_root)},
-                "interface": {"displayName": "Product Engineering"},
-            }
-        ],
-    }
-    (marketplace_dir / "marketplace.json").write_text(
-        json.dumps(marketplace, indent=2) + "\n", encoding="utf-8"
-    )
+    if ROOT in plugin_root.parents:
+        relative_plugin_path = "./" + plugin_root.relative_to(ROOT).as_posix()
+        marketplace_dir = ROOT / ".agents" / "plugins"
+        marketplace_dir.mkdir(parents=True, exist_ok=True)
+        marketplace = {
+            "name": "product-engineering",
+            "interface": {"displayName": "Product Engineering"},
+            "plugins": [
+                {
+                    "name": "product-engineering",
+                    "source": {"source": "local", "path": relative_plugin_path},
+                    "policy": {
+                        "installation": "AVAILABLE",
+                        "authentication": "ON_INSTALL",
+                    },
+                    "category": "Productivity",
+                }
+            ],
+        }
+        (marketplace_dir / "marketplace.json").write_text(
+            json.dumps(marketplace, indent=2) + "\n", encoding="utf-8"
+        )
     return metadata
 
 
