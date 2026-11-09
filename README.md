@@ -95,7 +95,7 @@ Or copy skill folders by hand into the folder your agent reads (`.agents/skills/
 
 ### ChatGPT
 
-A portable ChatGPT plugin package is available in [`chatgpt/`](chatgpt/README.md). Build it from the canonical skill folders with `python chatgpt/build.py`; the optional read-only MCP service adds live skill discovery and retrieval. ChatGPT web and desktop installation paths differ, and native Skills availability depends on plan and workspace eligibility.
+A portable ChatGPT plugin package is available in [`chatgpt/`](chatgpt/README.md). Build it from the canonical skill folders with `python chatgpt/build.py`; the optional read-only MCP service adds live skill discovery and retrieval. Its onboarding skill, `product-engineering-guide`, routes requests to the 44 canonical workflows. ChatGPT web and desktop installation paths differ, and native Skills availability depends on plan and workspace eligibility.
 
 ## From the first idea to paying users
 
