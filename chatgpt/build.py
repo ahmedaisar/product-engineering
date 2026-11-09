@@ -66,7 +66,7 @@ def adapt_skill_for_chatgpt(skill_file: Path) -> None:
         frontmatter += "\ndescription: " + json.dumps(prefix.rstrip())
     skill_file.write_text("---\n" + frontmatter + "\n---" + body, encoding="utf-8")
 
-def build(output: Path, mcp_url: str | None = None) -> dict:
+def build(output: Path) -> dict:
     output = output.resolve()
     if output == ROOT or (ROOT in output.parents and output != ROOT / "dist"):
         raise ValueError("Use the default repository dist/ directory or an output directory outside the source repository.")
@@ -110,23 +110,6 @@ def build(output: Path, mcp_url: str | None = None) -> dict:
     if total == 0:
         raise ValueError("No canonical skills were found.")
 
-    if mcp_url:
-        if not mcp_url.startswith("https://") or not mcp_url.endswith("/mcp"):
-            raise ValueError("--mcp-url must be an HTTPS URL ending in /mcp")
-        mcp_manifest = {
-            "$schema": "https://agent-plugins.org/schemas/1.0.0/mcp.schema.json",
-            "mcpServers": {
-                "product-engineering": {
-                    "type": "streamable-http",
-                    "url": mcp_url,
-                    "extensions": {"com.openai": {"auth": {"type": "none"}}},
-                }
-            },
-        }
-        (plugin_root / "mcp.json").write_text(
-            json.dumps(mcp_manifest, indent=2) + "\n", encoding="utf-8"
-        )
-
     metadata = {
         "plugin": PLUGIN_NAME,
         "source_repository": "https://github.com/ahmedaisar/product-engineering",
@@ -134,7 +117,6 @@ def build(output: Path, mcp_url: str | None = None) -> dict:
         "packs": list(PACKS),
         "skill_count": total,
         "skills": seen,
-        "mcp_included": bool(mcp_url),
     }
     (plugin_root / "build-info.json").write_text(
         json.dumps(metadata, indent=2) + "\n", encoding="utf-8"
@@ -176,18 +158,13 @@ def main() -> None:
         default=ROOT / "dist",
         help="Build output directory (default: repository dist/)",
     )
-    parser.add_argument(
-        "--mcp-url",
-        help="Optional deployed HTTPS MCP endpoint, ending in /mcp",
-    )
     args = parser.parse_args()
     result = build(args.output, args.mcp_url)
     print(
         f"Built {result['plugin']} with {result['skill_count']} canonical skills "
         f"from {len(result['packs'])} packs at {args.output.resolve()}"
     )
-    if not result["mcp_included"]:
-        print("MCP omitted: this is a standalone skills-only package.")
+    print("Built as a skills-only package for ChatGPT web compatibility; connect MCP separately if needed.")
 
 
 if __name__ == "__main__":
