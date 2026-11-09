@@ -32,6 +32,19 @@ CACHE_SECONDS = int(os.environ.get("CACHE_SECONDS", "300"))
 REQUEST_TIMEOUT = float(os.environ.get("REQUEST_TIMEOUT", "8"))
 MAX_FILE_BYTES = 256_000
 
+def _vercel_allowed_hosts() -> list[str]:
+    """Build an exact Host allowlist from Vercel's deployment environment."""
+    configured = os.environ.get("MCP_ALLOWED_HOSTS", "")
+    hosts = {value.strip().lower() for value in configured.split(",") if value.strip()}
+    # VERCEL_URL is deployment-specific; the project production URL is stable.
+    for key in ("VERCEL_URL", "VERCEL_PROJECT_PRODUCTION_URL"):
+        value = os.environ.get(key, "").strip().lower()
+        if value:
+            hosts.add(value.removeprefix("https://").removeprefix("http://").rstrip("/"))
+    # The SDK matches exact Host values; explicitly allow an optional port too.
+    return sorted(host for value in hosts for host in (value, f"{value}:*"))
+
+
 VERCEL_ALLOWED_HOSTS = _vercel_allowed_hosts()
 TRANSPORT_SECURITY = (
     TransportSecuritySettings(allowed_hosts=VERCEL_ALLOWED_HOSTS)
@@ -265,19 +278,6 @@ def get_repository_info() -> dict:
         "packs": sorted(PACKS),
         "source_url": f"https://github.com/{REPOSITORY}",
     }
-
-
-def _vercel_allowed_hosts() -> list[str]:
-    """Build an exact Host allowlist from Vercel's deployment environment."""
-    configured = os.environ.get("MCP_ALLOWED_HOSTS", "")
-    hosts = {value.strip().lower() for value in configured.split(",") if value.strip()}
-    # VERCEL_URL is deployment-specific; the project production URL is stable.
-    for key in ("VERCEL_URL", "VERCEL_PROJECT_PRODUCTION_URL"):
-        value = os.environ.get(key, "").strip().lower()
-        if value:
-            hosts.add(value.removeprefix("https://").removeprefix("http://").rstrip("/"))
-    # The SDK matches exact Host values; explicitly allow an optional port too.
-    return sorted(host for value in hosts for host in (value, f"{value}:*"))
 
 
 @server.custom_route("/health", methods=["GET"])
