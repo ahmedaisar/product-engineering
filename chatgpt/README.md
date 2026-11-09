@@ -66,6 +66,22 @@ The MCP service is optional and intentionally separate from the web-uploaded ski
 
 Do not put GitHub tokens or other secrets in the plugin package. The default public repository requires no credentials.
 
+## Deploy the MCP service to Vercel
+
+The MCP service is prepared as a Vercel Python/ASGI Function. The `index.py` entrypoint exports the FastMCP Streamable HTTP ASGI application, and Vercel installs dependencies from this directory's `requirements.txt`.
+
+1. In Vercel, choose **Add New → Project** and import `ahmedaisar/product-engineering` from GitHub.
+2. Set **Root Directory** to `chatgpt/mcp_server` and leave **Include files outside the Root Directory** disabled.
+3. Use the **Other** framework preset (or let Vercel detect the Python ASGI app). Leave Build Command and Output Directory blank.
+4. Optionally set `GITHUB_REPOSITORY=ahmedaisar/product-engineering`, `GITHUB_REF=main`, `CACHE_SECONDS=300`, and `REQUEST_TIMEOUT=8`. The repository and ref defaults already match this project.
+5. Deploy. Vercel injects `VERCEL_URL` and `VERCEL_PROJECT_PRODUCTION_URL`; the app uses those values to configure the MCP SDK Host allowlist. If you use an additional custom domain, add its hostname to `MCP_ALLOWED_HOSTS` as a comma-separated value.
+6. Verify `https://<deployment-host>/health` returns `{"status":"ok","service":"product-engineering-skills"}`.
+7. Connect your MCP client to `https://<deployment-host>/mcp`.
+
+The public GitHub repository requires no token. The MCP tools are read-only. The endpoint currently has no user authentication, so keep it intended for the connected integration and add authentication before exposing it to untrusted clients. Vercel function duration and streaming limits depend on your plan.
+
+The repository changes prepare the service but do not create a Vercel project or deploy it; project creation and deployment remain under your account.
+
 ## Security and behavior
 
 - MCP tools are read-only.
