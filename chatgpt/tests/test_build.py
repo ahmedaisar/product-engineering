@@ -77,6 +77,7 @@ class PackageBuildTests(unittest.TestCase):
         self.assertEqual(result["skill_count"], len(builder.PACKS))
         self.assertTrue((plugin / "skills" / "product-engineering-guide" / "SKILL.md").is_file())
         self.assertTrue((plugin / "skills" / "product-skill" / "references" / "guide.md").is_file())
+        self.assertTrue((self.root / "dist" / "product-engineering-chatgpt.zip").is_file())
         marketplace = json.loads(
             (self.root / ".agents" / "plugins" / "marketplace.json").read_text(encoding="utf-8")
         )
