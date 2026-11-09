@@ -79,7 +79,7 @@ pip install -r requirements.txt
 python server.py
 ```
 
-The server listens on port 8000 and exposes Streamable HTTP at `/mcp`. Configure the host to route HTTPS traffic to port 8000. Set `GITHUB_REPOSITORY` and optionally `GITHUB_REF` to point at a fork or pinned ref.
+The server listens on port 8000 and exposes Streamable HTTP at `/mcp`. Build the container from the repository root with `docker build -f chatgpt/mcp_server/Dockerfile -t product-engineering-mcp .`, then run it with `docker run --rm -p 8000:8000 product-engineering-mcp`. Configure the host to route HTTPS traffic to port 8000. Set `GITHUB_REPOSITORY` and optionally `GITHUB_REF` to point at a fork or pinned ref.
 
 The MCP service is optional. Do not put GitHub tokens or other secrets in the plugin package. The default public repository requires no credentials.
 
