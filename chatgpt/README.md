@@ -10,6 +10,7 @@ This directory contains the packaging and MCP integration source. The installabl
 - Supporting references, scripts, templates and assets located inside each skill folder.
 - A small, read-only MCP service for live skill discovery, retrieval and source revision checks.
 - A portable Agent Plugins manifest compatible with ChatGPT and Codex plugin packaging.
+- A ChatGPT onboarding skill, `product-engineering-guide`, that routes users to the canonical workflows and preserves explicit-only invocation for four user-started skills.
 
 ## Build the plugin
 
@@ -19,7 +20,7 @@ Requires Python 3.10+ and no third-party packages for packaging:
 python chatgpt/build.py
 ```
 
-This creates `dist/product-engineering/` and a repo-scoped marketplace at `.agents/plugins/marketplace.json`. The generated directories are build outputs and should not be edited by hand.
+This creates `dist/product-engineering/`, a distributable archive at `dist/product-engineering-chatgpt.zip`, and a repo-scoped marketplace at `.agents/plugins/marketplace.json`. The generated files are build outputs and should not be edited by hand.
 
 To include the optional remote MCP connection:
 
