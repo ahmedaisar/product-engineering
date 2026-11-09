@@ -29,19 +29,32 @@ python chatgpt/build.py --mcp-url https://YOUR-HOST.example/mcp
 
 The URL must be the deployed HTTPS Streamable HTTP endpoint. Without `--mcp-url`, the package is skills-only and remains useful without the MCP service.
 
-## Install and test in ChatGPT
+## Install and test
 
-Plugin marketplace sources and available product surfaces vary by account and workspace. For local testing, use ChatGPT Work on the web or the supported ChatGPT desktop workflow:
+There are two distinct installation paths. The local/repo marketplace workflow is for the ChatGPT desktop app; the web workflow connects the hosted MCP service as a personal plugin.
 
-1. Clone this repository and run the build command above.
-2. In ChatGPT, open **Plugins** and add the repository-scoped marketplace from the checked-out repository when that surface is available.
-3. Install **Product Engineering** from the marketplace.
-4. Start a new Work chat and invoke the plugin by name or ask a task that matches one of its skills.
-5. If you built with an MCP URL, test discovery with: "Find the skill for reviewing a release" and retrieval with: "Show me the instructions for the release-gate skill."
+### ChatGPT desktop: local repository marketplace
 
-For a portable manual package, zip the generated `dist/product-engineering/` directory and use the plugin installation/import flow supported by your ChatGPT account.
+1. Clone this repository and run `python chatgpt/build.py`.
+2. Open the ChatGPT desktop app and add the repo-scoped marketplace at `.agents/plugins/marketplace.json`.
+3. Restart the desktop app, open Plugins, choose the Product Engineering marketplace and install the plugin.
+4. Start a new chat and invoke Product Engineering or ask a task that matches one of its skills.
 
-**Plan and workspace note:** OpenAI documents the Plugins directory across plans, but native Skills in ChatGPT are currently limited to eligible Business, Enterprise, Healthcare and Edu users, subject to workspace settings. A plugin package being valid does not override account eligibility. See [Skills in ChatGPT](https://help.openai.com/en/articles/20001066-skills-in-chatgpt).
+The generated marketplace points to `./dist/product-engineering`. Re-run the build after pulling repository changes to refresh the generated package.
+
+### ChatGPT web: connect the MCP service
+
+1. Deploy the MCP service and obtain its stable HTTPS endpoint ending in `/mcp`.
+2. In ChatGPT web, open Plugins, select **Add custom MCP server**, and enter that endpoint.
+3. Choose no authentication for this public, read-only service, review the connection warning and create it as a plugin.
+4. Install the resulting personal plugin, switch to a supported Work chat, and invoke it with `@` or ask ChatGPT to find a skill.
+5. Try: "Find the skill for reviewing a release" and "Retrieve the release-gate skill instructions."
+
+This web flow exposes the live MCP tools. It does not automatically import the bundled skill folders into your account. To use bundled native skills, install the portable package through a supported plugin marketplace/source or upload individual skills using the Skills interface when your account and workspace support it.
+
+Public directory distribution is a separate release step: deploy the stable HTTPS MCP endpoint, prepare the package and submit it through OpenAI's plugin submission process. Creating files in this repository does not publish a plugin to the public directory.
+
+**Plan and workspace note:** OpenAI documents the Plugins directory across plans, but native Skills in ChatGPT are currently available only to eligible Business, Enterprise, Healthcare and Edu users, subject to workspace settings. Work and custom MCP app access also depend on plan and workspace controls. A valid package does not override account eligibility. See [Skills in ChatGPT](https://help.openai.com/en/articles/20001066-skills-in-chatgpt) and [Plugins in ChatGPT](https://help.openai.com/en/articles/20001256-plugins-in-chatgpt).
 
 ## MCP service
 
