@@ -1,7 +1,7 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "product-engineering",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "A collection of reusable product engineering workflows for planning, building, reviewing, shipping and operating software products with AI agents.",
   "author": {
     "name": "Product Engineering contributors"
