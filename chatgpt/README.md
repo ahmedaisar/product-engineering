@@ -24,7 +24,7 @@ This creates `dist/product-engineering/`, a distributable archive at `dist/produ
 
 ## Install in ChatGPT web
 
-The generated ZIP is a skills-only plugin so it can be uploaded for ChatGPT web use without declaring a bundled MCP server.
+The generated ZIP includes both the packaged skills and the remote Vercel MCP server configuration. This is intentional: OpenAI does not currently support adding an MCP server to an already-submitted skills-only plugin.
 
 1. Run `python chatgpt/build.py`.
 2. Open **Admin Console** in ChatGPT, select the intended workspace and open **Plugins**.
@@ -62,7 +62,7 @@ python server.py
 
 The server listens on port 8000 and exposes Streamable HTTP at `/mcp`. Build the container from the repository root with `docker build -f chatgpt/mcp_server/Dockerfile -t product-engineering-mcp .`, then run it with `docker run --rm -p 8000:8000 product-engineering-mcp`. Configure the host to route HTTPS traffic to port 8000. Set `GITHUB_REPOSITORY` and optionally `GITHUB_REF` to point at a fork or pinned ref.
 
-The MCP service is optional and intentionally separate from the web-uploaded skills plugin. In ChatGPT web, when custom MCP servers are available to your account or workspace, deploy the service and add it through **Plugins → Add custom MCP server** using the HTTPS `/mcp` endpoint. Create the connection as a separate plugin and invoke it in a supported Work chat. This separation keeps the skills package free of an embedded MCP declaration, which can cause imported plugins to be labelled Desktop only.
+The MCP service is packaged with the skills as one portable plugin. The root `mcp.json` declares the public Vercel Streamable HTTP endpoint. During public directory submission, upload the generated ZIP, connect the declared server through the **With MCP** flow, complete domain verification, and scan the discovered tools. The MCP service is read-only; the skills provide the workflows and the MCP tools provide live catalogue discovery and retrieval.
 
 Do not put GitHub tokens or other secrets in the plugin package. The default public repository requires no credentials.
 
@@ -77,6 +77,7 @@ The MCP service is prepared as a Vercel Python/ASGI Function. The `index.py` ent
 5. Deploy. Vercel injects `VERCEL_URL` and `VERCEL_PROJECT_PRODUCTION_URL`; the app uses those values to configure the MCP SDK Host allowlist. If you use an additional custom domain, add its hostname to `MCP_ALLOWED_HOSTS` as a comma-separated value.
 6. Verify `https://<deployment-host>/health` returns `{"status":"ok","service":"product-engineering-skills"}`.
 7. Connect your MCP client to `https://<deployment-host>/mcp`.
+8. When the OpenAI submission portal gives you a domain-verification token, set it as `OPENAI_APPS_CHALLENGE_TOKEN` in Vercel and redeploy. The service then returns that exact token as plain text at `/.well-known/openai-apps-challenge`. Remove the variable after verification if you no longer need the challenge route.
 
 The public GitHub repository requires no token. The MCP tools are read-only. The endpoint currently has no user authentication, so keep it intended for the connected integration and add authentication before exposing it to untrusted clients. Vercel function duration and streaming limits depend on your plan.
 
@@ -105,3 +106,20 @@ The existing collection validator remains authoritative for canonical skill qual
 ```bash
 VALIDATE_STRICT=1 python -B tools/validate.py
 ```
+
+
+## Public ChatGPT app submission
+
+The package includes both skills and the remote MCP configuration from the first upload. Do not remove `mcp.json` for the initial directory submission: OpenAI currently does not support adding an MCP server to a plugin first submitted as skills-only.
+
+Build the submission archive:
+
+```bash
+python chatgpt/build.py
+```
+
+The ZIP contains `plugin.json`, `mcp.json`, the onboarding skill, and the canonical skills from all six packs. The manifest includes five positive and three negative MCP review cases. Before submitting, run all eight cases against the live service and capture a reviewer-accessible walkthrough video. Add its URL to `extensions.com.openai.review.demo_recording_url` in `plugin.json`, rebuild, and upload the final ZIP.
+
+OpenAI's submission portal also requires a verified developer identity, domain verification, a successful MCP tool scan, and completed policy attestations. For domain verification, copy the exact token shown by the portal into Vercel's `OPENAI_APPS_CHALLENGE_TOKEN` environment variable, redeploy, and confirm that `https://<deployment-host>/.well-known/openai-apps-challenge` returns only that token as plain text. Never commit the token to Git.
+
+The privacy policy and terms are published in `chatgpt/PRIVACY.md` and `chatgpt/TERMS.md`. Review these documents for accuracy and ensure the developer identity selected in the OpenAI portal matches the publisher information in the package before submission.
