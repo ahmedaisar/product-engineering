@@ -159,7 +159,7 @@ def main() -> None:
         help="Build output directory (default: repository dist/)",
     )
     args = parser.parse_args()
-    result = build(args.output, args.mcp_url)
+    result = build(args.output)
     print(
         f"Built {result['plugin']} with {result['skill_count']} canonical skills "
         f"from {len(result['packs'])} packs at {args.output.resolve()}"
