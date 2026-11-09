@@ -140,6 +140,9 @@ def build(output: Path, mcp_url: str | None = None) -> dict:
         json.dumps(metadata, indent=2) + "\n", encoding="utf-8"
     )
 
+    archive_base = output / f"{PLUGIN_NAME}-chatgpt"
+    shutil.make_archive(str(archive_base), "zip", root_dir=output, base_dir=PLUGIN_NAME)
+
     if ROOT in plugin_root.parents:
         relative_plugin_path = "./" + plugin_root.relative_to(ROOT).as_posix()
         marketplace_dir = ROOT / ".agents" / "plugins"
