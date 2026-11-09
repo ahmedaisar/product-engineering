@@ -83,6 +83,12 @@ class VercelDeploymentTests(unittest.TestCase):
         self.assertIn("/mcp", paths)
         self.assertIn("/health", paths)
 
+    def test_app_factory_uses_pinned_sdk_no_argument_signature(self):
+        # MCP 1.26.0 accepts transport_security on FastMCP(), not on this method.
+        self.assertTrue(callable(module.server.streamable_http_app))
+        self.assertIsNotNone(module.app)
+        self.assertIs(module.server.settings.transport_security, module.TRANSPORT_SECURITY)
+
 
 if __name__ == "__main__":
     unittest.main()
