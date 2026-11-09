@@ -93,6 +93,10 @@ Or copy skill folders by hand into the folder your agent reads (`.agents/skills/
 - **Five `product` skills are in both** (`competitor-analysis`, `market-segments`, `value-proposition`, `beachhead-segment`, `growth-loops`), updated here. pm-skills carries them beside many others, so keep those plugins; each of the five loads twice and your agent picks either copy.
 - **The free `work-humanizer`**, if you installed it on its own, is the same skill as the pack here: keep one.
 
+### ChatGPT
+
+A portable ChatGPT plugin package is available in [`chatgpt/`](chatgpt/README.md). Build it from the canonical skill folders with `python chatgpt/build.py`; the optional read-only MCP service adds live skill discovery and retrieval. Its onboarding skill, `product-engineering-guide`, routes requests to the 44 canonical workflows. ChatGPT web and desktop installation paths differ, and native Skills availability depends on plan and workspace eligibility.
+
 ## From the first idea to paying users
 
 <picture>

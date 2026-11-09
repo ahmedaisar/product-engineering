@@ -1,0 +1,42 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "product-engineering",
+  "version": "0.1.0",
+  "description": "A collection of reusable product engineering workflows for planning, building, reviewing, shipping and operating software products with AI agents.",
+  "author": {
+    "name": "Product Engineering contributors"
+  },
+  "homepage": "https://github.com/ahmedaisar/product-engineering",
+  "repository": "https://github.com/ahmedaisar/product-engineering",
+  "license": "MIT",
+  "keywords": [
+    "product-engineering",
+    "product-management",
+    "software-development",
+    "ai-agents",
+    "shipping",
+    "skills"
+  ],
+  "extensions": {
+    "com.openai": {
+      "onboardingSkill": "./skills/product-engineering-guide/SKILL.md",
+      "interface": {
+        "displayName": "Product Engineering",
+        "shortDescription": "Plan, build, review and ship real products with AI skills.",
+        "longDescription": "A practical library of product engineering skills covering product discovery, AI shipping, agent teams, agent harnesses, application architecture and human-centered writing. Includes 44 reusable workflows with their supporting references and scripts.",
+        "developerName": "Product Engineering contributors",
+        "category": "Productivity",
+        "capabilities": [
+          "Read"
+        ],
+        "websiteURL": "https://github.com/ahmedaisar/product-engineering",
+        "defaultPrompt": [
+          "Use Product Engineering to help me decide what to build next.",
+          "Find the right skill for reviewing and safely shipping this change.",
+          "Help me plan and build a SaaS product from idea to production."
+        ],
+        "brandColor": "#2563EB"
+      }
+    }
+  }
+}

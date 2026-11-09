@@ -5,3 +5,6 @@ __pycache__/
 reports/
 sources.local.json
 tools/leaks.local.txt
+
+dist/
+.agents/plugins/marketplace.json
