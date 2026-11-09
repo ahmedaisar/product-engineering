@@ -33,8 +33,8 @@ def current_revision() -> str:
 
 def build(output: Path, mcp_url: str | None = None) -> dict:
     output = output.resolve()
-    if output == ROOT or ROOT in output.parents:
-        raise ValueError("Output directory must be outside the source repository.")
+    if output == ROOT or (ROOT in output.parents and output != ROOT / "dist"):
+        raise ValueError("Use the default repository dist/ directory or an output directory outside the source repository.")
     if output.exists():
         shutil.rmtree(output)
     output.mkdir(parents=True)
