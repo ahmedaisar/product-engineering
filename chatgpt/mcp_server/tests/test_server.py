@@ -82,6 +82,7 @@ class VercelDeploymentTests(unittest.TestCase):
         paths = {route.path for route in module.app.routes}
         self.assertIn("/mcp", paths)
         self.assertIn("/health", paths)
+        self.assertIn("/.well-known/openai-apps-challenge", paths)
 
     def test_app_factory_uses_pinned_sdk_no_argument_signature(self):
         # MCP 1.26.0 accepts transport_security on FastMCP(), not on this method.

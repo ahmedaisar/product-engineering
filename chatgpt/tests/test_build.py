@@ -46,6 +46,17 @@ class PackageBuildTests(unittest.TestCase):
         (self.chatgpt / "plugin.json").write_text(
             json.dumps({"name": "product-engineering"}), encoding="utf-8"
         )
+        (self.chatgpt / "mcp.json").write_text(
+            json.dumps({
+                "mcpServers": {
+                    "product-engineering": {
+                        "type": "streamable-http",
+                        "url": "https://example.vercel.app/mcp",
+                    }
+                }
+            }),
+            encoding="utf-8",
+        )
         guide = self.chatgpt / "skills" / "product-engineering-guide"
         guide.mkdir(parents=True)
         (guide / "SKILL.md").write_text(
@@ -93,10 +104,19 @@ class PackageBuildTests(unittest.TestCase):
         self.assertFalse((self.root / ".agents" / "plugins" / "marketplace.json").exists())
         self.assertTrue((output / "product-engineering" / "plugin.json").is_file())
 
-    def test_web_package_does_not_bundle_mcp(self):
+    def test_submission_package_bundles_mcp_configuration(self):
         builder.build(self.root / "dist")
         plugin = self.root / "dist" / "product-engineering"
-        self.assertFalse((plugin / "mcp.json").exists())
+        self.assertTrue((plugin / "mcp.json").is_file())
+        mcp_config = json.loads((plugin / "mcp.json").read_text(encoding="utf-8"))
+        self.assertEqual(
+            mcp_config["mcpServers"]["product-engineering"]["type"],
+            "streamable-http",
+        )
+        self.assertEqual(
+            mcp_config["mcpServers"]["product-engineering"]["url"],
+            "https://example.vercel.app/mcp",
+        )
         self.assertEqual(
             json.loads((plugin / "build-info.json").read_text(encoding="utf-8"))["skill_count"],
             len(builder.PACKS),

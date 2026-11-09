@@ -16,7 +16,7 @@ import yaml
 from mcp.server.fastmcp import FastMCP
 from mcp.server.transport_security import TransportSecuritySettings
 from starlette.requests import Request as StarletteRequest
-from starlette.responses import JSONResponse, Response
+from starlette.responses import JSONResponse, PlainTextResponse, Response
 
 REPOSITORY = os.environ.get("GITHUB_REPOSITORY", "ahmedaisar/product-engineering")
 REF = os.environ.get("GITHUB_REF", "main")
@@ -284,6 +284,15 @@ def get_repository_info() -> dict:
 async def health(_request: StarletteRequest) -> Response:
     """Public liveness endpoint; it intentionally exposes no repository data."""
     return JSONResponse({"status": "ok", "service": "product-engineering-skills"})
+
+
+@server.custom_route("/.well-known/openai-apps-challenge", methods=["GET"])
+async def openai_apps_challenge(_request: StarletteRequest) -> Response:
+    """Serve the exact OpenAI domain-verification token configured for this deployment."""
+    token = os.environ.get("OPENAI_APPS_CHALLENGE_TOKEN", "").strip()
+    if not token:
+        return Response(status_code=404)
+    return PlainTextResponse(token)
 
 
 # FastMCP 1.26.0 accepts transport security in its constructor;

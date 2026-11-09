@@ -32,7 +32,6 @@ def current_revision() -> str:
         return "unknown"
 
 
-
 def adapt_skill_for_chatgpt(skill_file: Path) -> None:
     """Preserve user-started workflows by making their activation rule explicit in metadata."""
     text = skill_file.read_text(encoding="utf-8")
@@ -66,6 +65,7 @@ def adapt_skill_for_chatgpt(skill_file: Path) -> None:
         frontmatter += "\ndescription: " + json.dumps(prefix.rstrip())
     skill_file.write_text("---\n" + frontmatter + "\n---" + body, encoding="utf-8")
 
+
 def build(output: Path) -> dict:
     output = output.resolve()
     if output == ROOT or (ROOT in output.parents and output != ROOT / "dist"):
@@ -78,6 +78,7 @@ def build(output: Path) -> dict:
         shutil.rmtree(plugin_root)
     plugin_root.mkdir()
     shutil.copy2(CHATGPT / "plugin.json", plugin_root / "plugin.json")
+    shutil.copy2(CHATGPT / "mcp.json", plugin_root / "mcp.json")
 
     skills_root = plugin_root / "skills"
     skills_root.mkdir()
@@ -114,6 +115,7 @@ def build(output: Path) -> dict:
         "plugin": PLUGIN_NAME,
         "source_repository": "https://github.com/ahmedaisar/product-engineering",
         "source_revision": current_revision(),
+        "mcp_server": "https://product-engineering-self.vercel.app/mcp",
         "packs": list(PACKS),
         "skill_count": total,
         "skills": seen,
@@ -164,7 +166,7 @@ def main() -> None:
         f"Built {result['plugin']} with {result['skill_count']} canonical skills "
         f"from {len(result['packs'])} packs at {args.output.resolve()}"
     )
-    print("Built as a skills-only package for ChatGPT web compatibility; connect MCP separately if needed.")
+    print("Built with packaged skills and the configured remote MCP server.")
 
 
 if __name__ == "__main__":
