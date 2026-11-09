@@ -36,15 +36,15 @@ def current_revision() -> str:
 def adapt_skill_for_chatgpt(skill_file: Path) -> None:
     """Preserve user-started workflows by making their activation rule explicit in metadata."""
     text = skill_file.read_text(encoding="utf-8")
-    match = re.match(r"\\A---\\s*\\n(.*?)\\n---(.*)\\Z", text, re.S)
+    match = re.match(r"\A---\s*\n(.*?)\n---(.*)\Z", text, re.S)
     if not match:
         return
     frontmatter, body = match.groups()
-    if not re.search(r"(?m)^disable-model-invocation:\\s*true\\s*$", frontmatter):
+    if not re.search(r"(?m)^disable-model-invocation:\s*true\s*$", frontmatter):
         return
 
     description_match = re.search(
-        r'(?m)^description:\\s*("(?:\\\\.|[^"\\\\])*"|' + r"'[^']*'|[^\\n]+)$",
+        r'(?m)^description:\s*("(?:\\.|[^"\\])*"|' + r"'[^']*'|[^\n]+)$",
         frontmatter,
     )
     prefix = "Only activate when the user explicitly asks to run this skill by name. "
@@ -63,9 +63,8 @@ def adapt_skill_for_chatgpt(skill_file: Path) -> None:
             + frontmatter[description_match.end():]
         )
     else:
-        frontmatter += "\\ndescription: " + json.dumps(prefix.rstrip())
-    skill_file.write_text("---\\n" + frontmatter + "\\n---" + body, encoding="utf-8")
-
+        frontmatter += "\ndescription: " + json.dumps(prefix.rstrip())
+    skill_file.write_text("---\n" + frontmatter + "\n---" + body, encoding="utf-8")
 
 def build(output: Path, mcp_url: str | None = None) -> dict:
     output = output.resolve()
