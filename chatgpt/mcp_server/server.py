@@ -10,6 +10,7 @@ from pathlib import PurePosixPath
 from typing import Any
 from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
+from urllib.parse import quote
 
 import yaml
 from mcp.server.fastmcp import FastMCP
@@ -81,6 +82,12 @@ def _api_url(path: str) -> str:
     return f"https://api.github.com/repos/{REPOSITORY}/{path}"
 
 
+def _raw_url(path: str) -> str:
+    ref = quote(REF, safe="")
+    encoded_path = quote(path, safe="/")
+    return f"https://raw.githubusercontent.com/{REPOSITORY}/{ref}/{encoded_path}"
+
+
 def _tree() -> dict:
     def load():
         payload = json.loads(_github_text(_api_url(f"git/trees/{REF}?recursive=1"), 5_000_000))
@@ -113,9 +120,7 @@ def _catalogue() -> list[dict[str, str]]:
             if not match or match.group(1) not in PACKS:
                 continue
             pack, folder = match.groups()
-            raw_url = (
-                f"https://raw.githubusercontent.com/{REPOSITORY}/{REF}/{path}"
-            )
+            raw_url = _raw_url(path)
             metadata = _parse_skill(_github_text(raw_url), folder)
             items.append(
                 {
@@ -202,7 +207,7 @@ def search_skills(query: str, limit: int = 8) -> dict:
 def get_skill(name: str) -> dict:
     """Retrieve the complete SKILL.md instructions for a skill by name or folder."""
     item = _skill(name)
-    url = f"https://raw.githubusercontent.com/{REPOSITORY}/{REF}/{item['path']}"
+    url = _raw_url(item["path"])
     content = _cached(f"file:{item['path']}", lambda: _github_text(url))
     return {**item, "content": content, "source_url": f"https://github.com/{REPOSITORY}/blob/{REF}/{item['path']}"}
 
@@ -212,7 +217,7 @@ def get_skill_file(name: str, relative_path: str) -> dict:
     """Retrieve a tracked UTF-8 text reference, script or template from inside a skill folder."""
     item = _skill(name)
     path = _safe_skill_path(item, relative_path)
-    url = f"https://raw.githubusercontent.com/{REPOSITORY}/{REF}/{path}"
+    url = _raw_url(path)
     content = _cached(f"file:{path}", lambda: _github_text(url))
     return {
         "skill": item["name"],
