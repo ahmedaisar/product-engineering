@@ -14,6 +14,9 @@ from urllib.parse import quote
 
 import yaml
 from mcp.server.fastmcp import FastMCP
+from mcp.server.transport_security import TransportSecuritySettings
+from starlette.requests import Request as StarletteRequest
+from starlette.responses import JSONResponse, Response
 
 REPOSITORY = os.environ.get("GITHUB_REPOSITORY", "ahmedaisar/product-engineering")
 REF = os.environ.get("GITHUB_REF", "main")
@@ -254,6 +257,36 @@ def get_repository_info() -> dict:
         "packs": sorted(PACKS),
         "source_url": f"https://github.com/{REPOSITORY}",
     }
+
+
+def _vercel_allowed_hosts() -> list[str]:
+    """Build an exact Host allowlist from Vercel's deployment environment."""
+    configured = os.environ.get("MCP_ALLOWED_HOSTS", "")
+    hosts = {value.strip().lower() for value in configured.split(",") if value.strip()}
+    # VERCEL_URL is deployment-specific; the project production URL is stable.
+    for key in ("VERCEL_URL", "VERCEL_PROJECT_PRODUCTION_URL"):
+        value = os.environ.get(key, "").strip().lower()
+        if value:
+            hosts.add(value.removeprefix("https://").removeprefix("http://").rstrip("/"))
+    # The SDK matches exact Host values; explicitly allow an optional port too.
+    return sorted(host for value in hosts for host in (value, f"{value}:*"))
+
+
+@server.custom_route("/health", methods=["GET"])
+async def health(_request: StarletteRequest) -> Response:
+    """Public liveness endpoint; it intentionally exposes no repository data."""
+    return JSONResponse({"status": "ok", "service": "product-engineering-skills"})
+
+
+# Vercel injects deployment hostnames. Local development retains the SDK's
+# safe localhost-only default when no deployment host is configured.
+_allowed_hosts = _vercel_allowed_hosts()
+if _allowed_hosts:
+    app = server.streamable_http_app(
+        transport_security=TransportSecuritySettings(allowed_hosts=_allowed_hosts)
+    )
+else:
+    app = server.streamable_http_app()
 
 
 if __name__ == "__main__":
