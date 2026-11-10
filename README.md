@@ -95,7 +95,7 @@ Or copy skill folders by hand into the folder your agent reads (`.agents/skills/
 
 ### ChatGPT
 
-A portable ChatGPT plugin package is available in [`chatgpt/`](chatgpt/README.md). Build it from the canonical skill folders with `python chatgpt/build.py`; the optional read-only MCP service adds live skill discovery and retrieval. Its onboarding skill, `product-engineering-guide`, routes requests to the 44 canonical workflows. ChatGPT web and desktop installation paths differ, and native Skills availability depends on plan and workspace eligibility.
+A portable ChatGPT plugin package is available in [`chatgpt/`](chatgpt/README.md). Build it from the canonical skill folders with `python chatgpt/build.py`; the optional read-only MCP service adds live skill discovery and retrieval. Its onboarding skill, `product-engineering-guide`, routes requests to the 45 canonical workflows. ChatGPT web and desktop installation paths differ, and native Skills availability depends on plan and workspace eligibility.
 
 ## From the first idea to paying users
 
@@ -188,7 +188,7 @@ Most start themselves when the work matches what they're for. You start four, ma
 
 - `work-humanizer`: Edits AI-sounding text, or interviews you
 
-28 of the 44 skills were learned on real products built with Claude Code, Codex and Grok; 14 are established methods (the strategy frameworks in `product`, the documentation and review methods in `ai-shipping`); `product-analytics` rests on its vendors' docs and `work-humanizer` on a detector test. Each pack's `README.md` says more about every skill.
+28 of the 45 skills were learned on real products built with Claude Code, Codex and Grok; 15 are established methods (the strategy frameworks in `product`, the documentation and review methods in `ai-shipping`, including the imported `improve` advisor workflow); `product-analytics` rests on its vendors' docs and `work-humanizer` on a detector test. Each pack's `README.md` says more about every skill.
 
 <details>
 <summary>What the skills cost your agent</summary>
