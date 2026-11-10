@@ -91,10 +91,6 @@ class VercelDeploymentTests(unittest.TestCase):
         self.assertIs(module.server.settings.transport_security, module.TRANSPORT_SECURITY)
 
 
-if __name__ == "__main__":
-    unittest.main()
-
-
 class SkillRetrievalTests(unittest.TestCase):
     @patch.object(module, "_skill", return_value={
         "name": "ui-design",
@@ -124,3 +120,7 @@ class SkillRetrievalTests(unittest.TestCase):
         self.assertIsInstance(result, str)
         self.assertIn("references/tokens.md", result)
         self.assertIn("# Design tokens\\n\\nReference body.", result)
+
+
+if __name__ == "__main__":
+    unittest.main()
