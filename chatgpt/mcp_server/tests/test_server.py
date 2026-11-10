@@ -122,5 +122,39 @@ class SkillRetrievalTests(unittest.TestCase):
         self.assertIn("# Design tokens\\n\\nReference body.", result)
 
 
+class ImproveSkillCatalogueTests(unittest.TestCase):
+    def test_improve_skill_and_reference_are_discoverable(self):
+        tree = {
+            "tree": [
+                {"path": "ai-shipping/skills/improve/SKILL.md"},
+                {"path": "ai-shipping/skills/improve/references/audit-playbook.md"},
+            ]
+        }
+
+        def github_text(url):
+            if url.endswith("/SKILL.md"):
+                return (
+                    "---\\nname: improve\\ndescription: \\"Codebase audits and planning.\\"\\n---\\n"
+                    "# Improve\\n"
+                )
+            return "# Audit Playbook\\n"
+
+        module._cache.clear()
+        try:
+            with patch.object(module, "_tree", return_value=tree), patch.object(
+                module, "_github_text", side_effect=github_text
+            ):
+                skills = module.list_skills("ai-shipping")["skills"]
+                improve = next(item for item in skills if item["name"] == "improve")
+                self.assertEqual(improve["path"], "ai-shipping/skills/improve/SKILL.md")
+                self.assertEqual(improve["pack"], "ai-shipping")
+
+                reference = module.get_skill_file("improve", "references/audit-playbook.md")
+                self.assertIn("# Audit Playbook", reference)
+                self.assertIn("references/audit-playbook.md", reference)
+        finally:
+            module._cache.clear()
+
+
 if __name__ == "__main__":
     unittest.main()
