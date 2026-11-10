@@ -134,10 +134,10 @@ class ImproveSkillCatalogueTests(unittest.TestCase):
         def github_text(url):
             if url.endswith("/SKILL.md"):
                 return (
-                    "---\\nname: improve\\ndescription: \\"Codebase audits and planning.\\"\\n---\\n"
-                    "# Improve\\n"
+                    "---\nname: improve\ndescription: \"Codebase audits and planning.\"\n---\n"
+                    "# Improve\n"
                 )
-            return "# Audit Playbook\\n"
+            return "# Audit Playbook\n"
 
         module._cache.clear()
         try:
