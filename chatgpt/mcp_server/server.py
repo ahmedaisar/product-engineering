@@ -228,27 +228,26 @@ def search_skills(query: str, limit: int = 8) -> dict:
 
 
 @server.tool()
-def get_skill(name: str) -> dict:
-    """Retrieve the complete SKILL.md instructions for a skill by name or folder."""
+def get_skill(name: str) -> str:
+    """Retrieve the complete SKILL.md as plain text for reliable MCP client rendering."""
     item = _skill(name)
     url = _raw_url(item["path"])
     content = _cached(f"file:{item['path']}", lambda: _github_text(url))
-    return {**item, "content": content, "source_url": f"https://github.com/{REPOSITORY}/blob/{REF}/{item['path']}"}
+    source_url = f"https://github.com/{REPOSITORY}/blob/{REF}/{item['path']}"
+    # Return text rather than a structured object. Some MCP client adapters discard
+    # structuredContent for large text-bearing objects and display them as {}.
+    return f"Source: {source_url}\n\n{content}"
 
 
 @server.tool()
-def get_skill_file(name: str, relative_path: str) -> dict:
-    """Retrieve a tracked UTF-8 text reference, script or template from inside a skill folder."""
+def get_skill_file(name: str, relative_path: str) -> str:
+    """Retrieve a tracked UTF-8 file as plain text for reliable MCP client rendering."""
     item = _skill(name)
     path = _safe_skill_path(item, relative_path)
     url = _raw_url(path)
     content = _cached(f"file:{path}", lambda: _github_text(url))
-    return {
-        "skill": item["name"],
-        "path": path,
-        "content": content,
-        "source_url": f"https://github.com/{REPOSITORY}/blob/{REF}/{path}",
-    }
+    source_url = f"https://github.com/{REPOSITORY}/blob/{REF}/{path}"
+    return f"Skill: {item['name']}\nPath: {path}\nSource: {source_url}\n\n{content}"
 
 
 @server.tool()
