@@ -70,7 +70,7 @@ codex plugin marketplace add phuryn/product-engineering
 codex plugin add product@product-engineering   # and the other packs
 ```
 
-Codex reads this repository's Claude Code marketplace as it is, and every skill runs there. The four you start run only when you name them: `$product:start-here`, `$ai-shipping:ship-check`, `$agent-harness:handover`, `$agent-harness:retro`. The rest also start themselves when you ask in plain words. To update: `codex plugin marketplace upgrade product-engineering`, then a new session.
+Codex reads this repository's Claude Code marketplace as it is, and every skill runs there. The five you start run only when you name them: `$product:start-here`, `$ai-shipping:ship-check`, `$ai-shipping:improve`, `$agent-harness:handover`, `$agent-harness:retro`. The rest also start themselves when you ask in plain words. To update: `codex plugin marketplace upgrade product-engineering`, then a new session.
 
 When Claude Code hands a build to Codex, Codex reads only the packs installed in Codex, so install there what its builds need: `app-stack` for screens and an MCP server.
 
@@ -124,7 +124,7 @@ A change you can check in a minute skips to step 4. Each step with an example, f
 
 ## The skills
 
-Most start themselves when the work matches what they're for. You start four, marked below: `/<pack>:<skill>` in Claude Code (`/product:start-here`), `$<pack>:<skill>` in Codex, `/<skill>` (Codex: `$<skill>`) from a folder copied into a repository.
+Most start themselves when the work matches what they're for. You start five, marked below: `/<pack>:<skill>` in Claude Code (`/product:start-here`), `$<pack>:<skill>` in Codex, `/<skill>` (Codex: `$<skill>`) from a folder copied into a repository.
 
 **product**: Deciding what to build
 
