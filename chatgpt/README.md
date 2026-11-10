@@ -10,7 +10,7 @@ This directory contains the packaging and MCP integration source. The installabl
 - Supporting references, scripts, templates and assets located inside each skill folder.
 - A small, read-only MCP service for live skill discovery, retrieval and source revision checks.
 - A portable Agent Plugins manifest compatible with ChatGPT and Codex plugin packaging.
-- A ChatGPT onboarding skill, `product-engineering-guide`, that routes users to the canonical workflows and preserves explicit-only invocation for four user-started skills.
+- A ChatGPT onboarding skill, `product-engineering-guide`, that routes users to the canonical workflows and preserves explicit-only invocation for five user-started skills.
 
 ## Build the plugin
 
