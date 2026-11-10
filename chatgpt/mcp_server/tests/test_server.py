@@ -103,7 +103,10 @@ class SkillRetrievalTests(unittest.TestCase):
     def test_get_skill_returns_renderable_plain_text(self, _github_text, _skill):
         result = module.get_skill("ui-design")
         self.assertIsInstance(result, str)
-        self.assertIn("https://github.com/ahmedaisar/product-engineering/blob/main/app-stack/skills/ui-design/SKILL.md", result)
+        self.assertIn(
+            f"https://github.com/ahmedaisar/product-engineering/blob/{module.REF}/app-stack/skills/ui-design/SKILL.md",
+            result,
+        )
         self.assertIn("# UI design\\n\\nFull skill body.", result)
 
     @patch.object(module, "_safe_skill_path", return_value="app-stack/skills/ui-design/references/tokens.md")
