@@ -25,7 +25,7 @@ claude plugin install ai-shipping@product-engineering
 
 Codex and other agents: see the collection's root `README.md`. Any skill can be started by name: `/ai-shipping:<skill>` in Claude Code, `$ai-shipping:<skill>` in Codex. All but `ship-check` also start on their own when the work matches.
 
-## Skills (11)
+## Skills (12)
 
 **You start it:**
 
@@ -35,6 +35,7 @@ Codex and other agents: see the collection's root `README.md`. Any skill can be 
 
 - **shipping-artifacts** — The durable documentation set that makes an AI-built app reviewable: a core every app needs (architecture, user/permission flows, permissions, variables/secrets, test-coverage map) plus conditional docs added only when they apply (emails, cron, SEO, embedded agents/automation). Defines what each doc must capture and how a reviewer uses it.
 - **code-review** — The top-level review skill. Correctness is its core; **performance and security are optional sub-cases** of the same engine. Anchors on agreements between participants across a boundary — the defects that are invisible file-by-file because each side looks reasonable alone — forces a violating execution, and refutes every candidate before reporting.
+- **improve** — A senior-advisor workflow for evidence-backed codebase audits and prioritized implementation plans across correctness, security, performance, tests, architecture, dependencies, developer experience, docs and product direction. It is strictly read-only on source code; its only writes are self-contained plans for other agents to execute.
 - **independent-review** — The unsteered review loop before anything ships: a fresh reviewer that never saw the build reads the unreleased diff and the working tree, round after round, until a round finds nothing the change introduced above Low. By default the reviewer is the Grok CLI when it's installed, so another model family, or else a fresh read-only Claude Code session; your agent instructions can name another, Codex included, that runs the way the skill requires. How to scope a round, write its brief, triage what it finds and when to stop, through a wrapper that writes the subject to disk and fails a round that came back too short to have run.
 - **release-gate** — How a change ships: the three moments and their bars (a stage done, a push that deploys, a promotion), the owner's preview, the preconditions, go/no-go, promote, and proving the build serving is the one reviewed. Learned on Next.js + Supabase + Clerk + Netlify, principle first.
 - **test-harness** — How to test an AI-built app so a green gate means something: what each harness fakes, the script contract, the authenticated mile, the rules that came from bugs, what to do when a fix doesn't land, and the coverage map written by whoever ran the gate.
