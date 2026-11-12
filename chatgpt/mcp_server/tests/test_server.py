@@ -103,7 +103,10 @@ class SkillRetrievalTests(unittest.TestCase):
     def test_get_skill_returns_renderable_plain_text(self, _github_text, _skill):
         result = module.get_skill("ui-design")
         self.assertIsInstance(result, str)
-        self.assertIn("https://github.com/ahmedaisar/product-engineering/blob/main/app-stack/skills/ui-design/SKILL.md", result)
+        self.assertIn(
+            f"https://github.com/ahmedaisar/product-engineering/blob/{module.REF}/app-stack/skills/ui-design/SKILL.md",
+            result,
+        )
         self.assertIn("# UI design\\n\\nFull skill body.", result)
 
     @patch.object(module, "_safe_skill_path", return_value="app-stack/skills/ui-design/references/tokens.md")
@@ -120,6 +123,40 @@ class SkillRetrievalTests(unittest.TestCase):
         self.assertIsInstance(result, str)
         self.assertIn("references/tokens.md", result)
         self.assertIn("# Design tokens\\n\\nReference body.", result)
+
+
+class ImproveSkillCatalogueTests(unittest.TestCase):
+    def test_improve_skill_and_reference_are_discoverable(self):
+        tree = {
+            "tree": [
+                {"path": "ai-shipping/skills/improve/SKILL.md"},
+                {"path": "ai-shipping/skills/improve/references/audit-playbook.md"},
+            ]
+        }
+
+        def github_text(url):
+            if url.endswith("/SKILL.md"):
+                return (
+                    "---\nname: improve\ndescription: \"Codebase audits and planning.\"\n---\n"
+                    "# Improve\n"
+                )
+            return "# Audit Playbook\n"
+
+        module._cache.clear()
+        try:
+            with patch.object(module, "_tree", return_value=tree), patch.object(
+                module, "_github_text", side_effect=github_text
+            ):
+                skills = module.list_skills("ai-shipping")["skills"]
+                improve = next(item for item in skills if item["name"] == "improve")
+                self.assertEqual(improve["path"], "ai-shipping/skills/improve/SKILL.md")
+                self.assertEqual(improve["pack"], "ai-shipping")
+
+                reference = module.get_skill_file("improve", "references/audit-playbook.md")
+                self.assertIn("# Audit Playbook", reference)
+                self.assertIn("references/audit-playbook.md", reference)
+        finally:
+            module._cache.clear()
 
 
 if __name__ == "__main__":

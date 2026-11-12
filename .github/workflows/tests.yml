@@ -32,7 +32,7 @@ jobs:
         run: |
           python chatgpt/build.py --output "$RUNNER_TEMP/product-engineering-dist"
           python -m json.tool "$RUNNER_TEMP/product-engineering-dist/product-engineering/plugin.json" > /dev/null
-          test "$(find "$RUNNER_TEMP/product-engineering-dist/product-engineering/skills" -name SKILL.md | wc -l)" -eq 45
+          test "$(find "$RUNNER_TEMP/product-engineering-dist/product-engineering/skills" -name SKILL.md | wc -l)" -eq 46
       - name: Test ChatGPT package builder
         run: python -m unittest discover -s chatgpt/tests -v
       - name: Test ChatGPT MCP service

@@ -23,13 +23,15 @@ claude plugin marketplace add phuryn/product-engineering
 claude plugin install ai-shipping@product-engineering
 ```
 
-Codex and other agents: see the collection's root `README.md`. Any skill can be started by name: `/ai-shipping:<skill>` in Claude Code, `$ai-shipping:<skill>` in Codex. All but `ship-check` also start on their own when the work matches.
+Codex and other agents: see the collection's root `README.md`. Any skill can be started by name: `/ai-shipping:<skill>` in Claude Code, `$ai-shipping:<skill>` in Codex. All but `ship-check` and `improve` also start on their own when the work matches.
 
-## Skills (11)
+## Skills (12)
 
 **You start it:**
 
 - **ship-check** — Turn a vibe-coded repo into a reviewer-ready shipping packet: document, wire agent context, run correctness, security and performance reviews, add an independent unsteered pass by a fresh reviewer that never saw the build (the reviewer the repository's instructions name, when it can run the way `independent-review` requires, and when it can't, their fallback runs if it can, otherwise the wrapper's reviewer runs without asking; if no other family can run, a fresh session of the builder's family, with the actual reviewer and why recorded; with none named, through the `independent-review` wrapper it carries: Grok when its CLI is installed, so another model family, or a fresh read-only Claude Code session; with neither CLI, a fresh read-only session of your own agent, given the prompt the wrapper writes), map test coverage, and compile the results. Only when you start it, because it writes docs, the agent instructions and the coverage map, and takes a long session; where docs already say what the product should do, or whoever runs the gate keeps the coverage map, it lists what it would overwrite and asks first.
+
+- **improve** — A senior-advisor workflow for evidence-backed codebase audits and prioritized implementation plans across correctness, security, performance, tests, architecture, dependencies, developer experience, docs and product direction. It is strictly read-only on source code; its only writes are self-contained plans for other agents to execute.
 
 **They start on their own:**
 

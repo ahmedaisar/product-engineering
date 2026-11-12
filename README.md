@@ -70,7 +70,7 @@ codex plugin marketplace add phuryn/product-engineering
 codex plugin add product@product-engineering   # and the other packs
 ```
 
-Codex reads this repository's Claude Code marketplace as it is, and every skill runs there. The four you start run only when you name them: `$product:start-here`, `$ai-shipping:ship-check`, `$agent-harness:handover`, `$agent-harness:retro`. The rest also start themselves when you ask in plain words. To update: `codex plugin marketplace upgrade product-engineering`, then a new session.
+Codex reads this repository's Claude Code marketplace as it is, and every skill runs there. The five you start run only when you name them: `$product:start-here`, `$ai-shipping:ship-check`, `$ai-shipping:improve`, `$agent-harness:handover`, `$agent-harness:retro`. The rest also start themselves when you ask in plain words. To update: `codex plugin marketplace upgrade product-engineering`, then a new session.
 
 When Claude Code hands a build to Codex, Codex reads only the packs installed in Codex, so install there what its builds need: `app-stack` for screens and an MCP server.
 
@@ -95,7 +95,7 @@ Or copy skill folders by hand into the folder your agent reads (`.agents/skills/
 
 ### ChatGPT
 
-A portable ChatGPT plugin package is available in [`chatgpt/`](chatgpt/README.md). Build it from the canonical skill folders with `python chatgpt/build.py`; the optional read-only MCP service adds live skill discovery and retrieval. Its onboarding skill, `product-engineering-guide`, routes requests to the 44 canonical workflows. ChatGPT web and desktop installation paths differ, and native Skills availability depends on plan and workspace eligibility.
+A portable ChatGPT plugin package is available in [`chatgpt/`](chatgpt/README.md). Build it from the canonical skill folders with `python chatgpt/build.py`; the optional read-only MCP service adds live skill discovery and retrieval. Its onboarding skill, `product-engineering-guide`, routes requests to the 45 canonical workflows. ChatGPT web and desktop installation paths differ, and native Skills availability depends on plan and workspace eligibility.
 
 ## From the first idea to paying users
 
@@ -124,7 +124,7 @@ A change you can check in a minute skips to step 4. Each step with an example, f
 
 ## The skills
 
-Most start themselves when the work matches what they're for. You start four, marked below: `/<pack>:<skill>` in Claude Code (`/product:start-here`), `$<pack>:<skill>` in Codex, `/<skill>` (Codex: `$<skill>`) from a folder copied into a repository.
+Most start themselves when the work matches what they're for. You start five, marked below: `/<pack>:<skill>` in Claude Code (`/product:start-here`), `$<pack>:<skill>` in Codex, `/<skill>` (Codex: `$<skill>`) from a folder copied into a repository.
 
 **product**: Deciding what to build
 
@@ -188,7 +188,7 @@ Most start themselves when the work matches what they're for. You start four, ma
 
 - `work-humanizer`: Edits AI-sounding text, or interviews you
 
-28 of the 44 skills were learned on real products built with Claude Code, Codex and Grok; 14 are established methods (the strategy frameworks in `product`, the documentation and review methods in `ai-shipping`); `product-analytics` rests on its vendors' docs and `work-humanizer` on a detector test. Each pack's `README.md` says more about every skill.
+28 of the 45 skills were learned on real products built with Claude Code, Codex and Grok; 15 are established methods (the strategy frameworks in `product`, the documentation and review methods in `ai-shipping`, including the imported `improve` advisor workflow); `product-analytics` rests on its vendors' docs and `work-humanizer` on a detector test. Each pack's `README.md` says more about every skill.
 
 <details>
 <summary>What the skills cost your agent</summary>
